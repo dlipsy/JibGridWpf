@@ -123,6 +123,16 @@ namespace Jib.WPF.Controls.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LastX {
+            get {
+                object obj = ResourceManager.GetObject("LastX", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap LessThan {
             get {
                 object obj = ResourceManager.GetObject("LessThan", resourceCulture);
@@ -186,6 +196,26 @@ namespace Jib.WPF.Controls.Properties {
         internal static System.Drawing.Bitmap StartsWith {
             get {
                 object obj = ResourceManager.GetObject("StartsWith", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Today {
+            get {
+                object obj = ResourceManager.GetObject("Today", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Yesterday {
+            get {
+                object obj = ResourceManager.GetObject("Yesterday", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

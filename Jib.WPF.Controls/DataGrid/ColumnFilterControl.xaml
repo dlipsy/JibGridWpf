@@ -220,7 +220,7 @@
             <ColumnDefinition Width="22"/>
             <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <ComboBox x:Name="cbOperation" ItemsSource="{Binding FilterOperations,Mode=OneWay}" SelectedItem="{Binding SelectedFilterOperation, Mode=TwoWay}" IsEnabled="{Binding FilterOperationsEnabled}" Grid.Column="0"  d:LayoutOverrides="Height"  Margin="0,0,-30,0" >
+        <ComboBox x:Name="cbOperation" ItemsSource="{Binding FilterOperations,Mode=OneWay}" SelectedItem="{Binding SelectedFilterOperation, Mode=TwoWay}" IsEnabled="{Binding FilterOperationsEnabled}" Grid.Column="0"  d:LayoutOverrides="Height" SelectionChanged="CbOperation_SelectionChanged"  Margin="0,0,-30,0" >
             <ComboBox.ItemTemplate>
                 <DataTemplate>
                     <Grid>

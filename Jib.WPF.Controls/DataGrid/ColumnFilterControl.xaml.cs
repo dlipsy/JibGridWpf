@@ -143,6 +143,8 @@ namespace Jib.WPF.Controls.DataGrid
             }
         }
 
+        private int FilterPeriod;
+
 
         private FilterOperationItem _SelectedFilterOperation;
         public FilterOperationItem SelectedFilterOperation
@@ -251,6 +253,15 @@ namespace Jib.WPF.Controls.DataGrid
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThanEqual, "Less Than or Equal", "/Jib.WPF.Controls;component/Images/LessThanEqual.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.NotEquals, "Not Equal", "/Jib.WPF.Controls;component/Images/NotEqual.png"));
                 }
+                if (TypeHelper.IsDateTimeType(FilterColumnInfo.PropertyType))
+                {
+                    CanUserSelectDistinct = false;
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.Today, "Today", "/Jib.WPF.Controls;component/Images/Today.png", false));
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.Yesterday, "Yesterday", "/Jib.WPF.Controls;component/Images/Yesterday.png", false));
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LastXDays, "Last X Days", "/Jib.WPF.Controls;component/Images/LastX.png", false));
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LastXWeeks, "Last X Weeks", "/Jib.WPF.Controls;component/Images/LastX.png", false));
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LastXMonths, "Last X Months", "/Jib.WPF.Controls;component/Images/LastX.png", false));
+                }
                 SelectedFilterOperation = FilterOperations[0];
             }
 
@@ -287,7 +298,12 @@ namespace Jib.WPF.Controls.DataGrid
 
           
         }
-
+        
+        private void ExecutePredicateGeneration(string value)
+        {
+            Grid.FirePredicationGeneration();
+            ResetControl();
+        }
 
         private void txtFilter_Loaded(object sender, RoutedEventArgs e)
         {
@@ -346,6 +362,30 @@ namespace Jib.WPF.Controls.DataGrid
                     return ExpressionHelper.GenerateGreaterThan(prop, filterValue, propType, objParam);
                 case Enums.FilterOperation.LessThan:
                     return ExpressionHelper.GenerateLessThan(prop, filterValue, propType, objParam);
+                case Enums.FilterOperation.Today:
+                    return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.ToString(), DateTime.Today.AddDays(1.0).ToString(), propType, objParam);
+
+                case Enums.FilterOperation.Yesterday:
+                    return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddDays(-1.0).ToString(), DateTime.Today.ToString(), propType, objParam);
+
+                case Enums.FilterOperation.LastXDays:
+                    if (FilterPeriod == 0)
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddDays(-1.0).ToString(), DateTime.Today.ToString(), propType, objParam);
+                    else
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddDays(-1 * FilterPeriod).ToString(), DateTime.Today.ToString(), propType, objParam);
+
+                case Enums.FilterOperation.LastXWeeks:
+                    if (FilterPeriod == 0)
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddDays(-7.0).ToString(), DateTime.Today.ToString(), propType, objParam);
+                    else
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddDays(-7 * FilterPeriod).ToString(), DateTime.Today.ToString(), propType, objParam);
+
+                case Enums.FilterOperation.LastXMonths:
+                    if (FilterPeriod == 0)
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddMonths(-1).ToString(), DateTime.Today.ToString(), propType, objParam);
+                    else
+                        return ExpressionHelper.GenerateBetweenValues(prop, DateTime.Today.AddMonths(-1 * FilterPeriod).ToString(), DateTime.Today.ToString(), propType, objParam);
+
                 default:
                     throw new ArgumentException("Could not decode Search Mode.  Did you add a new value to the enum, or send in Unknown?");
             }
@@ -464,5 +504,64 @@ namespace Jib.WPF.Controls.DataGrid
                 PropertyChanged(this, new PropertyChangedEventArgs(p));
         }
         #endregion
+
+        private void CbOperation_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (e.AddedItems.Count > 0)
+            {
+                var filterOperationItem = e.AddedItems[0] as FilterOperationItem;
+
+                switch (filterOperationItem.Description)
+                {                  
+                    case "Last X Days":
+                        if (Grid.IsFilterLoaded)
+                        {
+                            FilterPeriod = Grid.LastX;
+                        }                       
+
+                        ExecutePredicateGeneration(FilterPeriod.ToString());
+
+                        break;
+
+                    case "Last X Months":
+                        if (Grid.IsFilterLoaded)
+                        {
+                            FilterPeriod = Grid.LastX;
+                        }
+
+                        ExecutePredicateGeneration(FilterPeriod.ToString());
+
+                        break;
+
+                    case "Last X Weeks":
+                        if (Grid.IsFilterLoaded)
+                        {
+                            FilterPeriod = Grid.LastX;
+                        }
+
+                        ExecutePredicateGeneration(FilterPeriod.ToString());
+
+                        break;
+                }
+
+                if (filterOperationItem != null && !filterOperationItem.NeedsFilterValue)
+                {
+                    if (DoesFilterTextNeedToBeEmpty(filterOperationItem))
+                    {
+                        FilterText = " ";
+                    }
+                }
+            }
+        }
+        private bool DoesFilterTextNeedToBeEmpty(FilterOperationItem filterOperationItem)
+        {
+            if ((filterOperationItem.FilterOption == Enums.FilterOperation.LastXDays || filterOperationItem.FilterOption == Enums.FilterOperation.LastXWeeks || filterOperationItem.FilterOption == Enums.FilterOperation.LastXMonths) && FilterPeriod == 0)
+            {
+                return false;
+            }
+
+            return true;
+        }
+
     }
 }

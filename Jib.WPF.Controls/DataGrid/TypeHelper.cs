@@ -119,6 +119,22 @@ namespace Jib.WPF.Controls.DataGrid
                 else
                     return null;
             }
+            else if (type == typeof(DateTime) || type == typeof(DateTime?))
+            {
+                DateTime x;
+                if (DateTime.TryParse(value, out x))
+                    return x;
+                else
+                    return null;
+            }
+            else if (type == typeof(DateTimeOffset) || type == typeof(DateTimeOffset?))
+            {
+                DateTimeOffset x;
+                if (DateTimeOffset.TryParse(value, out x))
+                    return x;
+                else
+                    return null;
+            }
             return null;
         }
 
@@ -172,7 +188,7 @@ namespace Jib.WPF.Controls.DataGrid
 
         public static bool IsDateTimeType(Type p)
         {
-            return p == typeof(DateTime);
+            return p == typeof(DateTime) || p == typeof(DateTimeOffset);
         }
 
     }
