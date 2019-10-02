@@ -248,7 +248,7 @@ namespace Jib.WPF.Controls.DataGrid
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.GreaterThan, "Greater Than", "/Jib.WPF.Controls;component/Images/GreaterThan.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.GreaterThanEqual, "Greater Than or Equal", "/Jib.WPF.Controls;component/Images/GreaterThanEqual.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThan, "Less Than", "/Jib.WPF.Controls;component/Images/LessThan.png"));
-                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThanEqual, "Greater Than or Equal", "/Jib.WPF.Controls;component/Images/GreaterThanEqual.png"));
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThanEqual, "Less Than or Equal", "/Jib.WPF.Controls;component/Images/LessThanEqual.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.NotEquals, "Not Equal", "/Jib.WPF.Controls;component/Images/NotEqual.png"));
                 }
                 SelectedFilterOperation = FilterOperations[0];
