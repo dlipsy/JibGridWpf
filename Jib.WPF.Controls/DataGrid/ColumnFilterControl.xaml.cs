@@ -244,15 +244,21 @@ namespace Jib.WPF.Controls.DataGrid
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.StartsWith, "Starts With", "/Jib.WPF.Controls;component/Images/StartsWith.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.EndsWith, "Ends With", "/Jib.WPF.Controls;component/Images/EndsWith.png"));
                 }
-                FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.Equals, "Equals", "/Jib.WPF.Controls;component/Images/Equal.png"));
-                if (TypeHelper.IsNumbericType(FilterColumnInfo.PropertyType))
+
+                if (TypeHelper.IsStringType(FilterColumnInfo.PropertyType) || TypeHelper.IsNumericType(FilterColumnInfo.PropertyType))
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.Equals, "Equals", "/Jib.WPF.Controls;component/Images/Equal.png"));
+
+                if (TypeHelper.IsNumericType(FilterColumnInfo.PropertyType))
+                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.NotEquals, "Not Equal", "/Jib.WPF.Controls;component/Images/NotEqual.png"));
+
+                if (TypeHelper.IsNumericType(FilterColumnInfo.PropertyType) || TypeHelper.IsDateTimeType(FilterColumnInfo.PropertyType))
                 {
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.GreaterThan, "Greater Than", "/Jib.WPF.Controls;component/Images/GreaterThan.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.GreaterThanEqual, "Greater Than or Equal", "/Jib.WPF.Controls;component/Images/GreaterThanEqual.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThan, "Less Than", "/Jib.WPF.Controls;component/Images/LessThan.png"));
                     FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.LessThanEqual, "Less Than or Equal", "/Jib.WPF.Controls;component/Images/LessThanEqual.png"));
-                    FilterOperations.Add(new FilterOperationItem(Enums.FilterOperation.NotEquals, "Not Equal", "/Jib.WPF.Controls;component/Images/NotEqual.png"));
                 }
+
                 if (TypeHelper.IsDateTimeType(FilterColumnInfo.PropertyType))
                 {
                     CanUserSelectDistinct = false;
@@ -468,6 +474,11 @@ namespace Jib.WPF.Controls.DataGrid
             }
         }
 
+        internal static void SetWindowPosition(UserEntryDialog dialog)
+        {
+            throw new NotImplementedException();
+        }
+
         private string GetFormattedValue(object obj)
         {
             if (FilterColumnInfo.Converter != null)
@@ -562,6 +573,13 @@ namespace Jib.WPF.Controls.DataGrid
 
             return true;
         }
+        public static void SetWindowPosition(Window dialog)
+        {
+            Window mainWindow = Application.Current.MainWindow;
 
+            dialog.Owner = mainWindow;
+            dialog.Left = mainWindow.Left + (mainWindow.ActualWidth - dialog.ActualWidth) / 2;
+            dialog.Top = mainWindow.Top + (mainWindow.ActualHeight - dialog.ActualHeight) / 2.5;
+        }
     }
 }

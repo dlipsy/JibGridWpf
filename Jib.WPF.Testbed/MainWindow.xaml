@@ -1,10 +1,22 @@
-﻿<Window x:Class="Jib.WPF.Testbed.MainWindow"
+﻿<Controls:MetroWindow x:Class="Jib.WPF.Testbed.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" 
+        xmlns:Controls="http://metro.mahapps.com/winfx/xaml/controls"
         xmlns:jibcontrols="clr-namespace:Jib.WPF.Controls.DataGrid;assembly=Jib.WPF.Controls"
         Title="MainWindow" Height="768" Width="1024">
     <Grid>
-        <jibcontrols:JibGrid AutoGenerateColumns="True" CanUserFreeze="True" CanUserSelectDistinct="True" CanUserGroup="False" CanUserFilter="True"  Name="dataGrid1" Margin="0,25,0,0" >
+        <jibcontrols:JibGrid 
+            AutoGenerateColumns="True" 
+            CanUserFreeze="True" 
+            CanUserSelectDistinct="True" 
+            CanUserGroup="False"  
+            GridLinesVisibility="All"
+            SelectionMode="Extended"          
+            SelectionUnit="Cell"
+            FontSize="12"
+            CanUserFilter="True"  
+            Name="dataGrid1" 
+            Margin="0,25,0,0" >
             <!--<DataGrid.GroupStyle>
                 <GroupStyle>
                     <GroupStyle.HeaderTemplate>
@@ -41,4 +53,4 @@
         <Label Content="Jib.Grid Example" Height="28" HorizontalAlignment="Left" Name="label1" VerticalAlignment="Top" />
 
     </Grid>
-</Window>
+</Controls:MetroWindow>

@@ -1,18 +1,13 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
-using System.Text;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using System.Collections;
-using System.ComponentModel;
 
 namespace Jib.WPF.Controls.DataGrid
 {
@@ -181,7 +176,22 @@ namespace Jib.WPF.Controls.DataGrid
             Filters = new List<ColumnFilterControl>();
             _filterHandler = new PropertyChangedEventHandler(filter_PropertyChanged);
             InitializeComponent();
+            Style = GetStyle("DataGridStyle");
+            CellStyle = GetStyle("DataGridCellStyle");
+
+            //in App.xaml in your application, you need to update the DataGridStyle and DataGridCellStyle styles
+            //Jib.WPF.Testbed shows an example that conforms to the MahApps Teal light theme
         }
+
+        static public Style GetStyle(string keyName)
+        {
+            object resource = Application.Current.TryFindResource(keyName);
+            if (resource != null && resource.GetType() == typeof(Style))
+                return (Style)resource;
+            else
+                return null;
+        }
+
 
         /// <summary>
         /// Whenever any registered OptionControl raises the FilterChanged property changed event, we need to rebuild
@@ -342,6 +352,12 @@ namespace Jib.WPF.Controls.DataGrid
                 CollectionView.GroupDescriptions.Clear();
         }
         #endregion Grouping
+        public List<T> GetVisualChildCollection<T>(object parent) where T : Visual
+        {
+            List<T> visualCollection = new List<T>();
+            GetVisualChildCollection(parent as DependencyObject, visualCollection);
+            return visualCollection;
+        }
 
         #region Freezing
 
@@ -434,5 +450,132 @@ namespace Jib.WPF.Controls.DataGrid
         }
 
         #endregion
+
+
+
+        private int GetColumnHeaderIndexFromColumn(DataGridColumn column)
+        {
+            List<DataGridColumnHeader> columnHeaders = GetVisualChildCollection<DataGridColumnHeader>(MainGrid).Where(c => c.Visibility == Visibility.Visible).ToList();
+            int counter = 0;
+
+            foreach (DataGridColumnHeader columnHeader in columnHeaders)
+            {
+                if (columnHeader.Column == column)
+                {
+                    return counter;
+                }
+
+                if (columnHeader.Column != null)
+                {
+                    counter++;
+                }
+            }
+            return counter;
+        }
+
+        private void GetVisualChildCollection<T>(DependencyObject parent, List<T> visualCollection) where T : Visual
+        {
+            int count = VisualTreeHelper.GetChildrenCount(parent);
+            for (int i = 0; i < count; i++)
+            {
+                DependencyObject child = VisualTreeHelper.GetChild(parent, i);
+                if (child is T)
+                {
+                    visualCollection.Add(child as T);
+                }
+                else if (child != null)
+                {
+                    GetVisualChildCollection(child, visualCollection);
+                }
+            }
+        }
+
+        private void MenuHide_Click(object sender, RoutedEventArgs e)
+        {
+            var menuName = (MenuItem)e.Source;
+            DataGridColumn column = Columns.Where(c => c.Header.ToString() == menuName.DataContext.ToString()).FirstOrDefault();
+
+            int index = GetColumnHeaderIndexFromColumn(column);
+
+            var visibleColumns = Columns.Where(c => c.Visibility == Visibility.Visible).ToList();
+            for (int i = 0; i < visibleColumns.Count; i++)
+            {
+                if (index == i)
+                {
+                    visibleColumns[index].Visibility = Visibility.Hidden;
+                    break;
+                }
+            }
+
+            SaveReadingsDataGrid();
+        }
+
+        private void MenuRename_Click(object sender, RoutedEventArgs e)
+        {
+            var menuOption = (MenuItem)e.Source;
+
+            UserEntryDialog dialog = new UserEntryDialog();
+            dialog.Title = "Rename";
+            dialog.Width = 300;
+            dialog.ResponseTextBox.Text = menuOption.DataContext.ToString();
+            dialog.ResponseTextBox.SelectAll();
+            ColumnFilterControl.SetWindowPosition(dialog);
+
+            if (dialog.ShowDialog() == true)
+            {
+                DataGridColumn column = Columns.Where(c => c.Header.ToString() == menuOption.DataContext.ToString()).FirstOrDefault();
+                int index = GetColumnHeaderIndexFromColumn(column);
+
+                var visibleColumns = Columns.Where(c => c.Visibility == Visibility.Visible).ToList();
+                for (int i = 0; i < visibleColumns.Count; i++)
+                {
+                    if (index == i)
+                    {
+                        visibleColumns[index].Header = dialog.ResponseTextBox.Text;
+                        break;
+                    }
+                }
+
+                SaveReadingsDataGrid();
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        private void MenuShowAll_Click(object sender, RoutedEventArgs e)
+        {
+            foreach (var item in Columns)
+            {
+                item.Visibility = Visibility.Visible;
+            }
+
+            SaveReadingsDataGrid();
+        }
+
+        private void SaveReadingsDataGrid()
+        {
+            //TODO: Implement saving of column detail in upcoming issue
+
+            //var state = new GridColumnState();
+
+            //var index = 0;
+            //foreach (var dataGridColumn in MainGrid.Columns.OrderBy(c => c.DisplayIndex))
+            //{
+            //    var column = (DataGridBoundColumn)dataGridColumn;
+            //    var binding = (Binding)column.Binding;
+            //    var name = binding.Path.Path;
+            //    var col = new GridColumn
+            //    {
+            //        Name = name,
+            //        Header = column.Header.ToString(),
+            //        Index = index++,
+            //        Visibility = column.Visibility == Visibility.Visible
+            //    };
+
+            //    state.Add(col);
+            //}
+        }
     }
 }

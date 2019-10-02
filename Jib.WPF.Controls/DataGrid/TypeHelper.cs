@@ -169,7 +169,7 @@ namespace Jib.WPF.Controls.DataGrid
             return (type.IsGenericType && (type.GetGenericTypeDefinition() == typeof(Nullable<>)));
         }
 
-        public static bool IsNumbericType(Type p)
+        public static bool IsNumericType(Type p)
         {
             bool result = false;
             result = result || p == typeof(int);
@@ -183,7 +183,7 @@ namespace Jib.WPF.Controls.DataGrid
 
         public static bool IsStringType(Type p)
         {
-            return !IsNumbericType(p);
+            return !IsNumericType(p) && !IsDateTimeType(p);
         }
 
         public static bool IsDateTimeType(Type p)
