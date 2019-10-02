@@ -6,3 +6,5 @@
 /Jib.WPF.Controls/obj/Debug
 /Jib.WPF.Testbed/bin/Debug
 /.vs/Jib.WPF/v15/Server/sqlite3
+/Jib.WPF.Controls/bin/Debug
+/packages
