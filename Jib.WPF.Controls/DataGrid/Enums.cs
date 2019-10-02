@@ -18,7 +18,12 @@ namespace Jib.WPF.Controls.DataGrid
             LessThanEqual,
             GreaterThan,
             LessThan,
-            NotEquals
+            NotEquals,
+            Today,
+            Yesterday,
+            LastXDays,
+            LastXWeeks,
+            LastXMonths
         }
         public enum ColumnOption
         {

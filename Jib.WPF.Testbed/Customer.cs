@@ -18,6 +18,14 @@ namespace Jib.WPF.Testbed
         public string Region { get; set; }
         public decimal Amount { get; set; }
         public bool IsActive { get; set; }
+
+        public DateTime LastModified { get; set; } 
+            = DateTime.Now.Subtract(
+                new TimeSpan(
+                    Helpers.GetNextRandomValueBetween(0, 35), //num days 
+                    Helpers.GetNextRandomValueBetween(0, 23), //num hrs
+                    Helpers.GetNextRandomValueBetween(0, 59), //num min 
+                    Helpers.GetNextRandomValueBetween(0, 59))); //num seconds 
         public Customer() { IsActive = true; }
     }
 }

@@ -159,5 +159,34 @@ namespace Jib.WPF.Controls.DataGrid
                 return null;
             }
         }
+
+        public static Predicate<object> GenerateBetweenValues(MemberExpression prop, string value1, string value2, Type type, ParameterExpression objParam)
+        {
+            object typedInput1 = TypeHelper.ValueConvertor(type, value1);
+            Predicate<object> predicate1 = null;
+            if (typedInput1 != null)
+            {
+                var greaterThanEqualValue = System.Linq.Expressions.Expression.Constant(typedInput1, type);
+                var greaterThanEqualExpression = System.Linq.Expressions.Expression.GreaterThanOrEqual(prop, greaterThanEqualValue);
+                Expression<Func<object, bool>> greaterThanEqualfunction = System.Linq.Expressions.Expression.Lambda<Func<object, bool>>(greaterThanEqualExpression, objParam);
+                predicate1 = new Predicate<object>(greaterThanEqualfunction.Compile());
+            }
+            object typedInput2 = TypeHelper.ValueConvertor(type, value2);
+            Predicate<object> predicate2 = null;
+
+            if (typedInput2 != null)
+            {
+                var lessThanEqualValue = System.Linq.Expressions.Expression.Constant(typedInput2, type);
+                var lessThanEqualExpression = System.Linq.Expressions.Expression.LessThanOrEqual(prop, lessThanEqualValue);
+                Expression<Func<object, bool>> lessThanEqualfunction = System.Linq.Expressions.Expression.Lambda<Func<object, bool>>(lessThanEqualExpression, objParam);
+                predicate2 = new Predicate<object>(lessThanEqualfunction.Compile());
+
+                return predicate1.And(predicate2);
+            }
+            else
+            {
+                return null;
+            }
+        }
     }
 }

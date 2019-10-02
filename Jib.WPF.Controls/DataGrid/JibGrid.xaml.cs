@@ -34,6 +34,11 @@ namespace Jib.WPF.Controls.DataGrid
 
         public List<ColumnFilterControl> Filters { get; set; }
         public Type FilterType { get; set; }
+
+        public bool IsFilterLoaded { get; set; }
+
+        public int LastX { get; set; }
+
         protected ICollectionView CollectionView
         {
             get { return this.ItemsSource as ICollectionView; }
@@ -234,6 +239,42 @@ namespace Jib.WPF.Controls.DataGrid
             }
         }
 
+        public void FirePredicationGeneration()
+        {
+            {
+                Predicate<object> predicate = null;
+                foreach (var filter in Filters)
+                    if (filter.HasPredicate)
+                        if (predicate == null)
+                            predicate = filter.GeneratePredicate();
+                        else
+                            predicate = predicate.And(filter.GeneratePredicate());
+                bool canContinue = true;
+                var args = new CancelableFilterChangedEventArgs(predicate);
+                if (BeforeFilterChanged != null && !IsResetting)
+                {
+                    BeforeFilterChanged(this, args);
+                    canContinue = !args.Cancel;
+                }
+                if (canContinue)
+                {
+                    ListCollectionView view = CollectionViewSource.GetDefaultView(this.ItemsSource) as ListCollectionView;
+                    if (view != null && view.IsEditingItem)
+                        view.CommitEdit();
+                    if (view != null && view.IsAddingNew)
+                        view.CommitNew();
+                    if (CollectionView != null)
+                        CollectionView.Filter = predicate;
+                    if (AfterFilterChanged != null)
+                        AfterFilterChanged(this, new FilterChangedEventArgs(predicate));
+                }
+                else
+                {
+                    IsResetting = true;
+                    IsResetting = false;
+                }
+            }
+        }
 
         #region Grouping
 
