@@ -3,3 +3,6 @@
 ################################################################################
 
 /Jib.WPF.Testbed/obj/x86/Debug
+/Jib.WPF.Controls/obj/Debug
+/Jib.WPF.Testbed/bin/Debug
+/.vs/Jib.WPF/v15/Server/sqlite3
